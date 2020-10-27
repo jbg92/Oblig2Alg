@@ -175,6 +175,65 @@ public class AVLTree<E extends Comparable<E>> extends BST<E> {
         updateHeight((AVLTreeNode<E>)C);
     }
     
+    @Override
+    public boolean delete(E element){
+        if(root==null){
+            return false;
+        }
+        TreeNode<E> parent=null;
+        TreeNode<E> current=root;
+        while (current!=null) {            
+            if(element.compareTo(current.element)<0){
+                parent=current;
+                current=current.left;
+            }
+            else if(element.compareTo(current.element)>0){
+                parent=current;
+                current=current.right;
+            }
+            else{
+                break;
+            }
+        }
+        if (current==null) {
+            return false;
+        } 
+        if (current.left==null) {
+            if (parent==null) {
+                root=current.right;
+            } 
+            else {
+                if (element.compareTo(parent.element)<0) {
+                    parent.left=current.right;
+                } 
+                else {
+                    parent.right=current.right;
+                }
+                balancePath(parent.element);
+            }
+        } else {
+            TreeNode<E> parentOfRightmost=current;
+            TreeNode<E> rightMost=current.left;
+            
+            while(rightMost.right!=null){
+                parentOfRightmost=rightMost;
+                rightMost=rightMost.right;
+            }
+            current.element=rightMost.element;
+            
+            if (parentOfRightmost.right==rightMost) {
+                parentOfRightmost.right=rightMost.left;
+            }
+            else {
+                parentOfRightmost.left=rightMost.left;
+            }
+            balancePath(parentOfRightmost.element);
+            
+        }
+        size--;
+        return true;
+    }
+    
     protected static class AVLTreeNode<E> extends BST.TreeNode<E>{
         protected int height=0;
         protected int weight=0;
